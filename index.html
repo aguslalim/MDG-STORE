@@ -7,14 +7,28 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b',
+                        darkBorder: '#334155'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             scroll-behavior: smooth;
+            transition: background-color 0.3s, color 0.3s;
         }
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
         .modal-active {
             display: flex !important;
@@ -31,7 +45,6 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        
         .page-enter {
             animation: slideUp 0.4s ease-out forwards;
         }
@@ -39,31 +52,34 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Fix untuk Sticky yang bermasalah pada beberapa browser */
-        .sticky-content {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 100px;
-            height: fit-content;
+        
+        /* Sidebar Settings */
+        #settings-panel {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .panel-open {
+            transform: translateX(0) !important;
         }
     </style>
 </head>
-<body class="bg-[#f8fafc] text-[#0f172a]">
+<body class="bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-100 transition-colors duration-300">
 
     <!-- Navigasi -->
-    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200">
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-darkBg/80 backdrop-blur-lg border-b border-slate-200 dark:border-darkBorder">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-2 cursor-pointer" onclick="closeDetail()">
                 <div class="bg-blue-600 p-1.5 rounded-lg shadow-blue-200 shadow-lg">
                     <i data-lucide="box" class="text-white w-5 h-5"></i>
                 </div>
-                <span class="text-xl font-extrabold tracking-tight text-slate-900">MDG <span class="text-blue-600">STORE</span></span>
+                <span class="text-xl font-extrabold tracking-tight">MDG <span class="text-blue-600">STORE</span></span>
             </div>
             
             <div class="flex items-center space-x-4">
-                <button onclick="contactWA('Tanya Produk')" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-600 transition-all flex items-center gap-2">
-                    <i data-lucide="message-circle" class="w-4 h-4"></i> Chat WA
+                <button onclick="toggleSettings()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-darkCard hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors">
+                    <i data-lucide="settings" class="w-5 h-5 text-slate-600 dark:text-slate-400"></i>
+                </button>
+                <button onclick="contactWA('Tanya Produk')" class="bg-slate-900 dark:bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:opacity-90 transition-all flex items-center gap-2">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> Chat
                 </button>
             </div>
         </nav>
@@ -73,21 +89,21 @@
     <main id="home-view" class="block">
         <section class="container mx-auto px-4 mt-6">
             <div class="relative w-full h-48 md:h-72 rounded-[2rem] overflow-hidden shadow-2xl">
-                <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1200" alt="Banner Toko" class="w-full h-full object-cover">
+                <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1200" alt="Banner" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             </div>
             
             <div class="relative -mt-16 md:-mt-20 px-6 flex flex-col items-center md:items-start md:flex-row md:gap-8">
-                <div class="w-32 h-32 md:w-44 md:h-44 rounded-full border-4 border-white overflow-hidden shadow-xl bg-white">
-                    <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=300" alt="Logo Profil" class="w-full h-full object-cover">
+                <div class="w-32 h-32 md:w-44 md:h-44 rounded-full border-4 border-white dark:border-darkCard overflow-hidden shadow-xl bg-white">
+                    <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=300" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 
                 <div class="mt-4 md:mt-24 text-center md:text-left">
-                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 flex items-center justify-center md:justify-start gap-2">
+                    <h1 class="text-3xl md:text-4xl font-extrabold flex items-center justify-center md:justify-start gap-2">
                         MDG STORE <i data-lucide="badge-check" class="text-blue-500 fill-blue-500/20 w-6 h-6"></i>
                     </h1>
-                    <p class="text-slate-500 font-medium max-w-2xl mt-2 leading-relaxed">
-                        MDG STORE menyediakan 3D model low poly berkualitas tinggi, detail, dan optimal untuk game atau animasi Anda.
+                    <p class="text-slate-500 dark:text-slate-400 font-medium max-w-2xl mt-2 leading-relaxed">
+                        Pusat 3D model low poly premium. Optimal untuk developer game indie dan kreator konten digital.
                     </p>
                 </div>
             </div>
@@ -95,81 +111,74 @@
 
         <section id="katalog" class="container mx-auto px-6 py-16">
             <div class="mb-10">
-                <h2 class="text-2xl font-bold text-slate-900 mb-6">Etalase Koleksi</h2>
+                <h2 class="text-2xl font-bold mb-6">Etalase Koleksi</h2>
                 
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white dark:bg-darkCard p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-darkBorder">
                     <div class="flex gap-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0 hide-scrollbar" id="category-filters">
-                        <button class="filter-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-200" data-category="semua">Semua</button>
-                        <button class="filter-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="box">Box</button>
-                        <button class="filter-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="audio">Audio</button>
-                        <button class="filter-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="kendaraan">Kendaraan</button>
+                        <button class="filter-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-blue-600 text-white" data-category="semua">Semua</button>
+                        <button class="filter-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400" data-category="box">Box</button>
+                        <button class="filter-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400" data-category="audio">Audio</button>
+                        <button class="filter-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400" data-category="kendaraan">Kendaraan</button>
                     </div>
                     <div class="relative w-full lg:w-80">
                         <i data-lucide="search" class="absolute left-4 top-3 w-5 h-5 text-slate-400"></i>
-                        <input type="text" id="searchInput" placeholder="Cari nama model..." class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="searchInput" placeholder="Cari nama model..." class="w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white">
                     </div>
                 </div>
             </div>
 
             <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Diisi via JS -->
+                <!-- Data via JS -->
             </div>
         </section>
     </main>
 
     <!-- VIEW DETAIL -->
-    <div id="detail-view" class="hidden bg-white min-h-screen">
+    <div id="detail-view" class="hidden min-h-screen">
         <div class="container mx-auto px-6 py-10">
-            <button onclick="closeDetail()" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold mb-10 transition-colors">
+            <button onclick="closeDetail()" class="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-blue-600 font-bold mb-10 transition-colors">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i> Kembali ke Katalog
             </button>
 
-            <!-- Layout Grid dengan Fix Sticky -->
             <div class="flex flex-col lg:flex-row gap-12 lg:items-start page-enter">
-                
-                <!-- Sisi Kiri: Slider Gambar (Tetap di tempat saat di scroll di desktop) -->
                 <div class="w-full lg:w-1/2 lg:sticky lg:top-28">
-                    <div class="relative w-full aspect-square rounded-[2rem] overflow-hidden bg-slate-100 shadow-xl mb-6">
-                        <img id="slider-main-img" src="" alt="Produk Utama" class="w-full h-full object-cover">
-                        <button onclick="prevImage()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-3 rounded-full shadow-lg hover:text-blue-600 transition">
+                    <div class="relative w-full aspect-square rounded-[2rem] overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-xl mb-6">
+                        <img id="slider-main-img" src="" alt="Detail" class="w-full h-full object-cover">
+                        <button onclick="prevImage()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-darkCard/90 p-3 rounded-full shadow-lg hover:text-blue-600 transition">
                             <i data-lucide="chevron-left" class="w-6 h-6"></i>
                         </button>
-                        <button onclick="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-3 rounded-full shadow-lg hover:text-blue-600 transition">
+                        <button onclick="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-darkCard/90 p-3 rounded-full shadow-lg hover:text-blue-600 transition">
                             <i data-lucide="chevron-right" class="w-6 h-6"></i>
                         </button>
                     </div>
-                    <div class="grid grid-cols-3 gap-4" id="slider-thumbnails">
-                        <!-- Thumbnails -->
-                    </div>
+                    <div class="grid grid-cols-3 gap-4" id="slider-thumbnails"></div>
                 </div>
 
-                <!-- Sisi Kanan: Konten Teks -->
                 <div class="w-full lg:w-1/2">
-                    <div class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest w-fit mb-6" id="detail-category">Kategori</div>
-                    <h2 class="text-4xl font-extrabold text-slate-900 mb-4" id="detail-title">Nama Produk</h2>
+                    <div class="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest w-fit mb-6" id="detail-category">Kategori</div>
+                    <h2 class="text-4xl font-extrabold mb-4" id="detail-title">Nama Produk</h2>
                     <div class="flex items-baseline gap-2 mb-8">
                         <span class="text-4xl font-black text-blue-600" id="detail-price">Rp 0</span>
                         <span class="text-slate-400 font-bold">Lisensi Selamanya</span>
                     </div>
 
-                    <div class="prose prose-slate mb-10">
-                        <h4 class="text-lg font-bold text-slate-900 mb-3">Tentang Model Ini</h4>
-                        <p id="detail-desc" class="text-slate-600 leading-relaxed text-lg">Deskripsi produk...</p>
+                    <div class="mb-10">
+                        <h4 class="text-lg font-bold mb-3">Tentang Model Ini</h4>
+                        <p id="detail-desc" class="text-slate-600 dark:text-slate-400 leading-relaxed text-lg">Deskripsi...</p>
                     </div>
 
-                    <div class="bg-slate-50 rounded-3xl p-8 mb-10 border border-slate-100">
-                        <h4 class="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <div class="bg-slate-100 dark:bg-darkCard rounded-3xl p-8 mb-10 border border-slate-200 dark:border-darkBorder">
+                        <h4 class="font-bold mb-4 flex items-center gap-2">
                             <i data-lucide="info" class="w-5 h-5 text-blue-500"></i> Spesifikasi Teknis
                         </h4>
-                        <div class="grid grid-cols-1 gap-4 text-slate-600 font-medium">
-                            <div class="flex items-center gap-3"><i data-lucide="check" class="text-green-500 w-5 h-5"></i> Optimized Mesh (Low Poly)</div>
-                            <div class="flex items-center gap-3"><i data-lucide="check" class="text-green-500 w-5 h-5"></i> Game Ready (Unity/Unreal/Roblox)</div>
-                            <div class="flex items-center gap-3"><i data-lucide="check" class="text-green-500 w-5 h-5"></i> Format .FBX, .OBJ & .Blend</div>
-                            <div class="flex items-center gap-3"><i data-lucide="check" class="text-green-500 w-5 h-5"></i> Texture Included</div>
+                        <div class="grid grid-cols-1 gap-4 text-slate-600 dark:text-slate-400 font-medium">
+                            <div class="flex items-center gap-3"><i data-lucide="check" class="text-green-500 w-5 h-5"></i> Optimized Mesh</div>
+                            <div class="flex items-center gap-3"><i data-lucide="check" class="text-green-500 w-5 h-5"></i> Game Ready</div>
+                            <div class="flex items-center gap-3"><i data-lucide="check" class="text-green-500 w-5 h-5"></i> PBR Textures</div>
                         </div>
                     </div>
 
-                    <button id="btn-buy-detail" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-xl hover:bg-blue-600 transition-all shadow-2xl flex items-center justify-center gap-3">
+                    <button id="btn-buy-detail" class="w-full bg-slate-900 dark:bg-blue-600 text-white py-5 rounded-2xl font-black text-xl hover:opacity-90 transition-all shadow-2xl flex items-center justify-center gap-3">
                         <i data-lucide="shopping-cart" class="w-6 h-6"></i> BELI SEKARANG
                     </button>
                 </div>
@@ -177,17 +186,50 @@
         </div>
     </div>
 
+    <!-- PANEL SETTINGS (SIDEBAR) -->
+    <div id="settings-overlay" onclick="toggleSettings()" class="fixed inset-0 z-[60] bg-black/20 backdrop-blur-sm hidden"></div>
+    <div id="settings-panel" class="fixed right-0 top-0 h-full w-80 bg-white dark:bg-darkCard z-[70] shadow-2xl translate-x-full p-8 border-l border-slate-200 dark:border-darkBorder transition-all duration-300">
+        <div class="flex justify-between items-center mb-10">
+            <h3 class="text-xl font-bold">Pengaturan UI</h3>
+            <button onclick="toggleSettings()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
+                <i data-lucide="x" class="w-6 h-6 text-slate-400"></i>
+            </button>
+        </div>
+
+        <div class="space-y-8">
+            <!-- Theme Toggle -->
+            <div>
+                <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Tampilan</p>
+                <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-darkBg rounded-2xl border border-slate-200 dark:border-darkBorder">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="moon" id="theme-icon" class="w-5 h-5 text-blue-600"></i>
+                        <span class="font-bold text-sm" id="theme-text">Dark Mode</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="theme-toggle" class="sr-only peer" onchange="toggleDarkMode()">
+                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- More Info -->
+            <div class="pt-8 border-t border-slate-100 dark:border-darkBorder">
+                <p class="text-xs text-slate-400 font-medium">Versi Aplikasi: 2.1.0 Beta</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Konfirmasi -->
     <div id="buyModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
-        <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl relative">
+        <div class="bg-white dark:bg-darkCard rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl relative">
             <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <i data-lucide="shopping-bag" class="text-white w-8 h-8"></i>
             </div>
-            <h3 class="text-2xl font-black text-center text-slate-900 mb-2 leading-tight">Lanjutkan ke WhatsApp?</h3>
-            <p id="modalProductName" class="text-blue-600 font-bold text-center mb-8 border-b border-slate-100 pb-4"></p>
+            <h3 class="text-2xl font-black text-center mb-2 leading-tight">Lanjutkan ke WA?</h3>
+            <p id="modalProductName" class="text-blue-600 font-bold text-center mb-8 border-b border-slate-100 dark:border-darkBorder pb-4"></p>
             <div class="flex flex-col gap-3">
-                <button id="btnConfirmBuy" class="bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition">Lanjut Beli</button>
-                <button onclick="closeModal()" class="bg-slate-100 text-slate-500 py-4 rounded-2xl font-bold hover:bg-slate-200 transition">Batal</button>
+                <button id="btnConfirmBuy" class="bg-blue-600 text-white py-4 rounded-2xl font-bold hover:opacity-90 transition">Lanjut</button>
+                <button onclick="closeModal()" class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 py-4 rounded-2xl font-bold hover:opacity-80 transition">Batal</button>
             </div>
         </div>
     </div>
@@ -199,21 +241,49 @@
         let currentProductImages = [];
         let currentImageIndex = 0;
 
+        // Data Katalog
         const catalog = [
-            {
-                id: 1,
-                name: "BOX TURBASS",
-                price: "Rp 40.000",
-                category: "box",
-                images: [
-                    "https://raw.githubusercontent.com/aguslalim/MDG-STORE/b755c4e6810f2348ea70878435ad3eed419e6c1d/IMG_20260324_131059.png",
-                    "https://images.unsplash.com/photo-1588693892809-7d04a62243d4?auto=format&fit=crop&q=80&w=800",
-                    "https://images.unsplash.com/photo-1595113316349-9fa4eb24f884?auto=format&fit=crop&q=80&w=800"
-                ],
-                desc: "3D box subwoffeer set sigle & double"
-            }
-        ];
+            { id: 1, name: "BOX TURBASS", price: "Rp 40.000", category: "box", desc: "Box subwoofer set sigle & double", images: ["https://raw.githubusercontent.com/aguslalim/MDG-STORE/b755c4e6810f2348ea70878435ad3eed419e6c1d/IMG_20260324_131059.png","https://images.unsplash.com/photo-1588693892809-7d04a62243d4?auto=format&fit=crop&q=80&w=800","https://images.unsplash.com/photo-1595113316349-9fa4eb24f884?auto=format&fit=crop&q=80&w=800"] },
+             ];
 
+        // UI & Dark Mode Functions
+        function toggleSettings() {
+            const panel = document.getElementById('settings-panel');
+            const overlay = document.getElementById('settings-overlay');
+            panel.classList.toggle('panel-open');
+            overlay.classList.toggle('hidden');
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.getElementById('theme-toggle').checked;
+            const html = document.documentElement;
+            const text = document.getElementById('theme-text');
+            const icon = document.getElementById('theme-icon');
+
+            if (isDark) {
+                html.classList.add('dark');
+                text.innerText = "Dark Mode";
+                icon.setAttribute('data-lucide', 'moon');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.classList.remove('dark');
+                text.innerText = "Light Mode";
+                icon.setAttribute('data-lucide', 'sun');
+                localStorage.setItem('theme', 'light');
+            }
+            lucide.createIcons();
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const toggle = document.getElementById('theme-toggle');
+            if (savedTheme === 'dark') {
+                toggle.checked = true;
+                toggleDarkMode();
+            }
+        }
+
+        // Logic Functions
         function renderCatalog() {
             const list = document.getElementById('product-list');
             const filtered = catalog.filter(p => {
@@ -223,104 +293,7 @@
             });
 
             list.innerHTML = filtered.map(p => `
-                <div class="product-card cursor-pointer bg-white rounded-[2rem] border border-slate-100 overflow-hidden flex flex-col transition-all" onclick="openDetail(${p.id})">
+                <div class="product-card cursor-pointer bg-white dark:bg-darkCard rounded-[2rem] border border-slate-200 dark:border-darkBorder overflow-hidden flex flex-col transition-all" onclick="openDetail(${p.id})">
                     <div class="h-64 overflow-hidden relative">
                         <img src="${p.images[0]}" class="w-full h-full object-cover">
-                        <span class="absolute top-4 left-4 bg-blue-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">${p.category}</span>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-slate-900 mb-1">${p.name}</h3>
-                        <p class="text-blue-600 font-black text-lg">${p.price}</p>
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-
-        function openDetail(id) {
-            const p = catalog.find(item => item.id === id);
-            currentProductImages = p.images;
-            currentImageIndex = 0;
-
-            document.getElementById('detail-title').innerText = p.name;
-            document.getElementById('detail-price').innerText = p.price;
-            document.getElementById('detail-category').innerText = p.category;
-            document.getElementById('detail-desc').innerText = p.desc;
-            
-            updateSliderDOM();
-
-            document.getElementById('btn-buy-detail').onclick = () => openModal(p.name);
-
-            document.getElementById('home-view').classList.add('hidden');
-            document.getElementById('detail-view').classList.remove('hidden');
-            window.scrollTo(0, 0);
-        }
-
-        function closeDetail() {
-            document.getElementById('detail-view').classList.add('hidden');
-            document.getElementById('home-view').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function updateSliderDOM() {
-            document.getElementById('slider-main-img').src = currentProductImages[currentImageIndex];
-            const thumbs = document.getElementById('slider-thumbnails');
-            thumbs.innerHTML = currentProductImages.map((img, i) => `
-                <div onclick="setSliderImage(${i})" class="cursor-pointer aspect-square rounded-2xl overflow-hidden border-4 transition-all ${i === currentImageIndex ? 'border-blue-500' : 'border-transparent opacity-60'}">
-                    <img src="${img}" class="w-full h-full object-cover">
-                </div>
-            `).join('');
-        }
-
-        function nextImage() {
-            currentImageIndex = (currentImageIndex + 1) % currentProductImages.length;
-            updateSliderDOM();
-        }
-
-        function prevImage() {
-            currentImageIndex = (currentImageIndex - 1 + currentProductImages.length) % currentProductImages.length;
-            updateSliderDOM();
-        }
-
-        function setSliderImage(i) {
-            currentImageIndex = i;
-            updateSliderDOM();
-        }
-
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            searchQuery = e.target.value;
-            renderCatalog();
-        });
-
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.filter-btn').forEach(b => {
-                    b.classList.replace('bg-blue-600', 'bg-slate-100');
-                    b.classList.replace('text-white', 'text-slate-600');
-                    b.classList.remove('shadow-md', 'shadow-blue-200');
-                });
-                e.target.classList.replace('bg-slate-100', 'bg-blue-600');
-                e.target.classList.replace('text-slate-600', 'text-white');
-                e.target.classList.add('shadow-md', 'shadow-blue-200');
-                currentCategory = e.target.getAttribute('data-category');
-                renderCatalog();
-            });
-        });
-
-        function openModal(name) {
-            document.getElementById('modalProductName').innerText = name;
-            document.getElementById('buyModal').classList.add('modal-active');
-            document.getElementById('btnConfirmBuy').onclick = () => {
-                window.open(`https://wa.me/${waNumber}?text=Halo MDG DESIGN, saya mau beli model: ${name}`, '_blank');
-                closeModal();
-            }
-        }
-
-        function closeModal() { document.getElementById('buyModal').classList.remove('modal-active'); }
-        function contactWA() { window.open(`https://wa.me/${waNumber}?text=Halo MDG DESIGN, ada yang mau saya tanyakan.`, '_blank'); }
-
-        window.onload = () => { renderCatalog(); lucide.createIcons(); };
-    </script>
-</body>
-</html>
-
+                        <span class="absolute top-4 left-4 bg-blue-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">${p.categ
