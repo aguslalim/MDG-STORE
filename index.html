@@ -35,6 +35,32 @@
             scroll-behavior: smooth;
             transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s ease;
         }
+
+        /* Glitch Easter Egg Styles */
+        @keyframes glitch-shake {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
+
+        .glitch-mode {
+            animation: glitch-shake 0.15s infinite !important;
+            filter: hue-rotate(120deg) contrast(1.8) brightness(1.2) !important;
+            pointer-events: none !important; /* Lock interactions */
+            user-select: none !important;
+        }
+
+        .glitch-mode::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+            z-index: 9999;
+            pointer-events: none;
+        }
         
         .dark .product-card:hover {
             box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
@@ -78,7 +104,7 @@
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-100 min-h-screen flex flex-col">
+<body id="body-main" class="bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-100 min-h-screen flex flex-col">
 
     <!-- Navigasi -->
     <header class="sticky top-0 z-50 bg-white/70 dark:bg-darkBg/70 backdrop-blur-xl border-b border-slate-200 dark:border-white/5">
@@ -112,14 +138,14 @@
         <div class="space-y-6">
             <label class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] block">Tampilan Global</label>
             <div class="space-y-3">
-                <button onclick="setTheme('light')" id="theme-light-btn" class="w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all group border-blue-600 bg-blue-50 text-blue-600">
+                <button onclick="setTheme('light'); trackEasterEgg();" id="theme-light-btn" class="w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all group border-blue-600 bg-blue-50 text-blue-600">
                     <div class="flex items-center gap-3">
                         <i data-lucide="sun" class="w-5 h-5"></i>
                         <span class="font-bold text-sm">Bright</span>
                     </div>
                     <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-600"></i>
                 </button>
-                <button onclick="setTheme('dark')" id="theme-dark-btn" class="w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all group border-transparent bg-slate-50 text-slate-400">
+                <button onclick="setTheme('dark'); trackEasterEgg();" id="theme-dark-btn" class="w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all group border-transparent bg-slate-50 text-slate-400">
                     <div class="flex items-center gap-3">
                         <i data-lucide="moon" class="w-5 h-5"></i>
                         <span class="font-bold text-sm">Dark Neon</span>
@@ -135,7 +161,6 @@
 
     <!-- MAIN VIEW -->
     <main id="home-view" class="block animate-in fade-in duration-500 flex-grow">
-        <!-- Banner & Intro Section Sama Seperti Sebelumnya -->
         <section class="container mx-auto px-4 mt-6">
             <div class="relative w-full h-56 md:h-80 rounded-[2.5rem] overflow-hidden shadow-2xl group">
                 <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1200" alt="Banner" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
@@ -162,7 +187,6 @@
             </div>
         </section>
 
-        <!-- Katalog Section Sama Seperti Sebelumnya -->
         <section id="katalog" class="container mx-auto px-6 py-20">
             <div class="mb-12 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 p-6 bg-white dark:bg-darkCard rounded-3xl shadow-sm border border-slate-200 dark:border-white/5">
                 <div class="flex gap-3 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0 hide-scrollbar">
@@ -188,7 +212,6 @@
             </button>
 
             <div class="flex flex-col lg:flex-row gap-16 lg:items-start">
-                <!-- Sisi Kiri Slider Gambar -->
                 <div class="w-full lg:w-1/2 lg:sticky lg:top-28">
                     <div class="relative w-full aspect-square rounded-[3rem] overflow-hidden bg-white dark:bg-darkCard shadow-2xl border border-transparent dark:border-white/5 mb-6 group">
                         <img id="detail-img-main" src="" class="w-full h-full object-cover transition-transform duration-500">
@@ -203,7 +226,6 @@
                     <div class="grid grid-cols-3 gap-4" id="detail-thumbnails"></div>
                 </div>
 
-                <!-- Sisi Kanan Informasi & Disclaimer -->
                 <div class="w-full lg:w-1/2">
                     <div class="bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.2em] w-fit mb-8" id="detail-cat">Kategori</div>
                     <h2 class="text-5xl font-black mb-6 leading-tight dark:neon-text" id="detail-title">Nama Produk</h2>
@@ -218,7 +240,6 @@
                         <p id="detail-desc" class="text-slate-600 dark:text-slate-400 leading-relaxed text-xl"></p>
                     </div>
 
-                    <!-- Kelebihan Model -->
                     <div class="grid grid-cols-2 gap-4 mb-10">
                         <div class="detail-perk p-6 bg-slate-100 dark:bg-white/5 rounded-3xl cursor-pointer">
                             <i data-lucide="zap" class="text-yellow-500 mb-3"></i>
@@ -232,7 +253,6 @@
                         </div>
                     </div>
 
-                    <!-- Disclaimer Box -->
                     <div class="mb-6 p-5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-500/30 rounded-3xl flex gap-4 items-start dark:hover:shadow-neon-amber transition-shadow duration-300">
                         <i data-lucide="alert-triangle" class="text-amber-500 w-7 h-7 flex-shrink-0"></i>
                         <p class="text-sm text-amber-800 dark:text-amber-400 leading-relaxed">
@@ -240,7 +260,6 @@
                         </p>
                     </div>
 
-                    <!-- Anti-Resale Box (New) -->
                     <div class="mb-8 p-5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 rounded-3xl flex gap-4 items-start dark:hover:shadow-neon-red transition-shadow duration-300">
                         <i data-lucide="shield-alert" class="text-red-500 w-7 h-7 flex-shrink-0"></i>
                         <p class="text-sm text-red-800 dark:text-red-400 leading-relaxed">
@@ -256,7 +275,6 @@
         </div>
     </div>
 
-    <!-- Footer Resmi -->
     <footer class="mt-auto border-t border-slate-200 dark:border-white/5 bg-white/50 dark:bg-darkBg py-16">
         <div class="container mx-auto px-6 text-center">
             <div class="flex items-center justify-center space-x-2 mb-6 opacity-80">
@@ -270,9 +288,7 @@
                 <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed italic">
                     "Memberikan kualitas visual terbaik untuk dunia virtual Anda."
                 </p>
-                
                 <div class="h-px w-20 bg-slate-200 dark:bg-white/10 mx-auto"></div>
-                
                 <div class="space-y-3">
                     <p class="text-[10px] uppercase tracking-[0.3em] font-black text-slate-400 dark:text-slate-600">Legal Notice</p>
                     <p class="text-slate-400 dark:text-slate-500 text-xs leading-relaxed px-4">
@@ -285,15 +301,11 @@
                     <p class="text-slate-900 dark:text-white font-bold text-sm tracking-widest flex items-center justify-center gap-2">
                         &copy; 2026 MDG STORE. <span class="text-blue-600">ALL RIGHTS RESERVED.</span>
                     </p>
-                    <p class="text-[9px] text-slate-400 dark:text-slate-600 mt-2 font-black uppercase tracking-widest">
-                        Official Store of MDG 3D Design & Development
-                    </p>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Modal Konfirmasi Sama Seperti Sebelumnya -->
     <div id="buyModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md">
         <div class="bg-white dark:bg-darkCard rounded-[3rem] p-10 max-w-sm w-full shadow-2xl border border-transparent dark:border-blue-500/20">
             <div class="w-20 h-20 bg-blue-100 dark:bg-blue-500/20 rounded-full flex items-center justify-center mb-8 mx-auto dark:shadow-neon">
@@ -314,11 +326,29 @@
         let currentProductImages = [];
         let activeImageIndex = 0;
 
+        // Easter Egg Logic
+        let eggClicks = 0;
+        let lastClickTime = 0;
+
+        function trackEasterEgg() {
+            const now = Date.now();
+            if (now - lastClickTime < 450) {
+                eggClicks++;
+            } else {
+                eggClicks = 1;
+            }
+            lastClickTime = now;
+
+            if (eggClicks >= 8) {
+                document.getElementById('body-main').classList.add('glitch-mode');
+            }
+        }
+
         const catalog = [
             { 
                 id: 1, 
                 name: "BOX TURBASS", 
-                price: "Rp 85.000", 
+                price: "Rp 40.000", 
                 category: "box", 
                 images: [
                     "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?auto=format&fit=crop&q=80&w=800",
